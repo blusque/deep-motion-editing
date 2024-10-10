@@ -1,0 +1,42 @@
+Brotli @ file:///croot/brotli-split_1714483155106/work
+certifi @ file:///croot/certifi_1725551672989/work/certifi
+charset-normalizer @ file:///croot/charset-normalizer_1721748349566/work
+contourpy==1.1.1
+cycler==0.12.1
+fonttools==4.54.1
+idna @ file:///croot/idna_1714398848350/work
+importlib_resources==6.4.5
+joblib @ file:///croot/joblib_1718217211762/work
+kiwisolver==1.4.7
+matplotlib==3.7.5
+mkl-fft @ file:///croot/mkl_fft_1695058164594/work
+mkl-random @ file:///croot/mkl_random_1695059800811/work
+mkl-service==2.4.0
+numpy @ file:///work/mkl/numpy_and_numpy_base_1682953417311/work
+packaging @ file:///croot/packaging_1720101850331/work
+pandas==2.0.3
+pillow @ file:///croot/pillow_1721059439630/work
+platformdirs @ file:///croot/platformdirs_1692205439124/work
+pooch @ file:///croot/pooch_1695850093751/work
+protobuf==5.28.2
+pyparsing==3.1.4
+PySocks @ file:///tmp/build/80754af9/pysocks_1605305779399/work
+python-dateutil==2.9.0.post0
+pytz==2024.2
+PyYAML==6.0.2
+requests @ file:///croot/requests_1721410876868/work
+scikit-learn @ file:///croot/scikit-learn_1694788527225/work
+scipy==1.10.1
+six==1.16.0
+tensorboardX==2.6.2.2
+threadpoolctl @ file:///croot/threadpoolctl_1719407800858/work
+tikzplotlib==0.10.1
+torch==1.13.1
+torchaudio==0.13.1
+torchvision==0.14.1
+tqdm==4.66.5
+typing_extensions @ file:///croot/typing_extensions_1715268824938/work
+tzdata==2024.2
+urllib3 @ file:///croot/urllib3_1718912636303/work
+webcolors==1.13
+zipp==3.20.2
