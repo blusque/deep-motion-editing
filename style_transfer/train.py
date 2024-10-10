@@ -164,4 +164,10 @@ def main(args):
 
 if __name__ == '__main__':
     args = parse_args()
+    # import tikzplotlib
+    # import matplotlib.pyplot as plt
+    # fig = plt.figure()
+    # title = "None"
+    # tikzplotlib.save("%s.tex" % title, figure=fig, strict=True)
+    
     main(args)

@@ -7,6 +7,7 @@ from kinematics import ForwardKinematics
 from blocks import ConvBlock, ResBlock, LinearBlock, \
     BottleNeckResBlock, Upsample, ConvLayers, ActiFirstResBlock, \
     get_conv_pad, get_norm_layer
+from utils.load_skeleton import Skel
 
 
 def assign_adain_params(adain_params, model):
@@ -156,7 +157,11 @@ class JointGen(nn.Module):
         self.dec = Decoder(config)
         self.mlp = MLP(config,
                        get_num_adain_params(self.dec))
-        self.fk = ForwardKinematics()
+        ##############################
+        skel = Skel(config.skel_path)
+        self.fk = ForwardKinematics(skel=skel)
+        ##############################
+        # self.fk = ForwardKinematics()
 
     def rot_to_motion(self, rotations):
         return self.fk.forwardX(rotations)

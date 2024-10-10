@@ -442,7 +442,7 @@ def incidence(parents):
     
     es = edges(parents)
     
-    inc = np.zeros((len(parents)-1, len(parents))).astype(np.int)
+    inc = np.zeros((len(parents)-1, len(parents))).astype(np.int64)
     for i, e in enumerate(es):
         inc[i,e[0]] =  1
         inc[i,e[1]] = -1

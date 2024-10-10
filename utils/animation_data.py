@@ -122,7 +122,7 @@ def foot_contact_from_positions(positions, fid_l=(3, 4), fid_r=(7, 8)):
     for fid_index in [fid_l, fid_r]:
         foot_vel = (positions[1:, fid_index] - positions[:-1, fid_index]) ** 2  # [T - 1, 2, 3]
         foot_vel = np.sum(foot_vel, axis=-1)  # [T - 1, 2]
-        foot_contact = (foot_vel < velfactor).astype(np.float)
+        foot_contact = (foot_vel < velfactor).astype(np.float32)
         feet_contact.append(foot_contact)
     feet_contact = np.concatenate(feet_contact, axis=-1)  # [T - 1, 4]
     feet_contact = np.concatenate((feet_contact[0:1].copy(), feet_contact), axis=0)
@@ -139,7 +139,7 @@ def phase_from_ft(foot_contact, is_debug=False):
     num_circles = 0
     circle_length = 0
     total_length = len(foot_contact)
-    ft = foot_contact[:, [0, 2]].astype(np.int)
+    ft = foot_contact[:, [0, 2]].astype(np.int64)
     ft_start = np.zeros((total_length, 2))
     phases = np.zeros((total_length, 1))
 
@@ -239,7 +239,7 @@ class AnimationData:
         self.frametime = frametime
         self.len = len(full)
         self.rotations = full[:, :-8].reshape(self.len, -1, 4)  # [T, Jo, 4]
-        assert self.rotations.shape[1] == len(self.skel.topology), "Rotations do not match the skeleton."
+        assert self.rotations.shape[1] == len(self.skel.topology), f"Rotations do not match the skeleton. {self.rotations.shape[1]} != {len(self.skel.topology)}"
         self.rotations /= np.sqrt(np.sum(self.rotations ** 2, axis=-1))[..., np.newaxis]
         self.rt_pos = full[:, -8:-5]  # [T, 3]
         self.rt_rot = full[:, -5:-4]  # [T, 1]
@@ -408,7 +408,7 @@ def test_all(args):
         return np.sum((a - b) ** 2)
 
     def test_phase_from_ft():
-        pace = np.zeros((100, 1), dtype=np.int)
+        pace = np.zeros((100, 1), dtype=np.int64)
         pace[::8] = 1
         left = pace[:-4]
         right = pace[4:]

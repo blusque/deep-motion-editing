@@ -257,6 +257,9 @@ class Model(nn.Module):
                 dt = self.convert_to_disc(self.merge_pos_glb(xt, xglb))
                 dr = self.convert_to_disc(self.merge_pos_glb(xr, xglb))
 
+                # print("dt.shape = ", self.merge_pos_glb(xt, xglb).shape)
+                # print("dr.shape = ", self.merge_pos_glb(xr, xglb).shape)
+
             l_fake_p_r, acc_f_r, resp_f_r = self.dis.calc_dis_fake_loss(dr.detach(), la)
             l_fake_p_t, acc_f_t, resp_f_t = self.dis.calc_dis_fake_loss(dt.detach(), lb)
             l_fake_p = (l_fake_p_r + l_fake_p_t) / 2.0

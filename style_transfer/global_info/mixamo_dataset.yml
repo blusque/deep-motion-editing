@@ -1,0 +1,25 @@
+# made a dataset yml file for mixamo dataset
+# select 8 styles and 6 contents from 100 style dataset 
+# https://www.ianxmason.com/100style/
+
+style_names:
+  ["Angry", "Crouched", "Depressed", "Neutral", "Old", "Proud", "Skip", "Strutting"]
+
+# BR	Backwards Running
+# BW	Backwards Walking
+# FR	Forwards Running
+# FW	Forwards Walking
+# ID	Idling
+# SR	Sidestep Running
+# SW	Sidestep Walking
+# TR1/TR2/TR3	Transitions
+
+content_full_names:
+  ["Backwards Running", "Backwards Walking", "Forwards Running", 
+    "Forwards Walking", "Idling", "Sidestep Running", "Sidestep Walking", 
+    "Transitions1", "Transitions2", "Transitions3"]
+
+content_names:
+  ["BR", "BW", "FR", "FW", "ID", "SR", "SW", "TR1", "TR2", "TR3"]
+
+

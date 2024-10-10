@@ -85,7 +85,7 @@ class MotionNorm(Dataset):
         super(MotionNorm, self).__init__()
 
         np.random.seed(2020)
-        self.skel = Skel()  # TD: add config
+        self.skel = Skel(config.skel_path)  # TD: add config
 
         if data_path is None:
             data_path = config.data_path

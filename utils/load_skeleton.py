@@ -25,9 +25,12 @@ class Skel:
 
 
 if __name__ == '__main__':
-    skel = Skel()
+    # skel = Skel()
+    skel = Skel(os.path.join(BASEPATH, "..", "style_transfer", "global_info", "skeleton_Mixamo.yml"))
     print(skel.topology)
+    print(skel.topology.shape)
     print(skel.offset)
+    print(skel.offset.shape)
     print(skel.rest_bvh[0].offsets)
     print(skel.chosen_joints)
     print(skel.chosen_parents)

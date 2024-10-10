@@ -73,6 +73,24 @@ def divide_clip_bfa(input, window, window_step, divide):
         if input.shape[0] < t:
             input = pad_to_window(input, t)
         return [input]
+    
+    windows = []
+    for j in range(0, len(input) - window + 1, window_step):
+        slice = input[j: j + window].copy()  # remember to COPY!!
+        if len(slice) < window:
+            slice = pad_to_window(slice, window)
+        windows.append(slice)
+    return windows
+
+
+def divide_clip_mixamo(input, window, window_step, divide):
+    if not divide:  # return the whole clip
+        t = ((input.shape[0]) // 4) * 4 + 4
+        t = max(t, 12)
+        if input.shape[0] < t:
+            input = pad_to_window(input, t)
+        return [input]
+    
     windows = []
     for j in range(0, len(input) - window + 1, window_step):
         slice = input[j: j + window].copy()  # remember to COPY!!
@@ -263,6 +281,87 @@ def generate_database_bfa(bvh_path, output_path, window, window_step, downsample
         yaml.dump(data_info, f, sort_keys=False)
 
 
+def generate_database_mixamo(bvh_path, output_path, window, window_step, downsample=4, dataset_config='mixamo_dataset.yml'):
+    with open(dataset_config, "r") as f:
+        cfg = yaml.load(f, Loader=yaml.Loader)
+    content_namedict = [full_name for full_name in cfg["content_full_names"]]
+    content_names = cfg["content_names"]
+    style_names = cfg["style_names"]
+    style_name_to_idx = {name: i for i, name in enumerate(style_names)}
+
+    skel = Skel(pjoin(BASEPATH, '../global_info', 'skeleton_Mixamo.yml'))
+
+    bvh_files = get_bvh_files(bvh_path)
+
+    train_inputs = []
+    test_inputs = []
+    trainfull_inputs = []
+    test_files = []
+
+    group_size = 10  # pick the last clip from every group_size clips for test
+    test_window = window * 2
+
+    for i, item in enumerate(bvh_files):
+        # get file name
+        print('Processing %i of %i (%s)' % (i, len(bvh_files), item))
+        filename = item.split('/')[-1]
+        bvhname = filename.split('.')[0]
+        style, content = bvhname.split('_')
+        style_idx = style_name_to_idx[style]
+
+        # get raw motion phases
+        raw = bvh_to_motion_and_phase(item, downsample=downsample, skel=skel)  # [T, xxx]
+        total_length = len(raw)
+        group_length = test_window * group_size
+
+        for st in range(0, total_length, group_length):
+            ed = st + group_length
+            if ed <= total_length:
+                test_clips = motion_and_phase_to_dict([raw[ed - test_window: ed]], style_idx, {"style": style, "content": content})
+                test_inputs += test_clips
+            train_clips = motion_and_phase_to_dict(divide_clip_mixamo(raw[st: ed - test_window],
+                                                                   window=window, window_step=window_step, divide=True),
+                                                   style_idx, {"style": style, "content": content})
+
+            trainfull_clips = motion_and_phase_to_dict(divide_clip_mixamo(raw[st: ed - test_window],
+                                                                       window=test_window, window_step=test_window, divide=True),
+                                                       style_idx, {"style": style, "content": content})
+            train_inputs += train_clips
+            trainfull_inputs += trainfull_clips
+
+    data_dict = {}
+    data_info = {}
+    for subset, inputs in zip(["train", "test", "trainfull"], [train_inputs, test_inputs, trainfull_inputs]):
+        motions = [input["motion"] for input in inputs]
+        styles = [input["style"] for input in inputs]
+        meta = {key: [input["meta"][key] for input in inputs] for key in inputs[0]["meta"].keys()}
+        data_dict[subset] = {"motion": motions, "style": styles, "meta": meta}
+
+        """compute meta info"""
+        num_clips = len(motions)
+        info = {"num_clips": num_clips,
+                "distribution":
+                    {style:
+                         {content: len([i for i in range(num_clips) if meta["style"][i] == style and meta["content"][i] == content])
+                          for content in content_names}
+                     for style in style_names}
+                }
+        data_info[subset] = info
+
+    np.savez_compressed(output_path + ".npz", **data_dict)
+
+    info_file = output_path + ".info"
+    data_info["test_files"] = test_files
+    with open(info_file, "w") as f:
+        yaml.dump(data_info, f, sort_keys=False)
+
+    test_folder = output_path + "_test"
+    if not os.path.exists(test_folder):
+        os.makedirs(test_folder)
+    for file in test_files:
+        shutil.copy(pjoin(bvh_path, file), pjoin(test_folder, file))
+
+
 def parse_args():
     parser = argparse.ArgumentParser("export_train")
     parser.add_argument("--dataset", type=str, default="xia")
@@ -283,6 +382,10 @@ def main(args):
         generate_database_bfa(bvh_path=args.bvh_path, output_path=args.output_path,
                               window=args.window, window_step=args.window_step,
                               dataset_config=args.dataset_config)
+    elif args.dataset == "100style":
+        generate_database_mixamo(bvh_path=args.bvh_path, output_path=args.output_path,
+                                 window=args.window, window_step=args.window_step,
+                                 dataset_config=args.dataset_config)
     else:
         assert 0, f'Unsupported dataset type {args.dataset}'
 

@@ -124,7 +124,7 @@ def plot2D_phase(data, labels, title):
 
     # plt.colorbar(bla, cax=cax) <- some problem with the color bar..
     # fig.tight_layout()
-    tikzplotlib.save("%s.tex" % title, figure=fig, strict=True)
+    # tikzplotlib.save("%s.tex" % title, figure=fig, strict=True)
     plt.savefig("%s.png" % title)
     return fig
 
@@ -264,9 +264,14 @@ def get_all_plots(data, output_path, writers, iter, summary=True,
 
     for label in ["style", "content", "phase"]:
         if label == "phase":
-            indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "walk"]
-            walk_code = content_code_pca[np.array(indices)]
+            indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "FW"]
+            if len(indices) == 0:
+                continue
+            # indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "walk"]
+            walk_code = content_code_pca[np.array(indices, dtype=np.int32)]
             phase_labels = [data["train"]["meta"]["phase"][i] for i in indices]
+            # print(phase_labels)
+            # print(walk_code.shape)
             fig = plot2D_phase(walk_code, phase_labels, fig_title(f'content_by_{label}'))
         else:
             fig = plot2D(content_code_pca, data["train"]["meta"][label], fig_title(f'content_by_{label}'))
@@ -307,12 +312,15 @@ def get_demo_plots(data, output_path):
 
     content_code_pca = calc_pca(data["train"]["content_code"])
 
-    indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "walk"]
+    plot2D(content_code_pca, style_labels, fig_title(f'content_by_style'))
+
+    indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "FW"]
+    if len(indices) == 0:
+        return
+    # indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "walk"]
     walk_code = content_code_pca[np.array(indices)]
     phase_labels = [data["train"]["meta"]["phase"][i] for i in indices]
     plot2D_phase(walk_code, phase_labels, fig_title(f'content_by_phase'))
-
-    plot2D(content_code_pca, style_labels, fig_title(f'content_by_style'))
 
 
 def show_images_from_disk(path, titles, rows, this_title):
