@@ -128,7 +128,7 @@ def main(args):
                     vis_dicts[phase] = vis_dict
 
                 writers = {"train": train_writer, "test": test_writer}
-                get_all_plots(vis_dicts, os.path.join(config.output_dir, key_str), writers, iterations + 1)
+                get_all_plots(vis_dicts, os.path.join(config.output_dir, key_str), writers, iterations + 1, style_cluster_protocols=('pca', 'tsne'))
 
                 """outputs"""
                 for phase, co_loader, cl_loader in [['trainfull', trainfull_content_loader, trainfull_class_loader],

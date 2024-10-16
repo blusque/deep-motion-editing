@@ -1,3 +1,9 @@
 style_names:
   ["Angry", "Depressed", "Drunk", "FemaleModel", "Happy", "Heavy", "Hurried", "Lazy", "Neutral", "Old", "Proud", "Robot", "Sneaky", "Soldier", "Strutting", "Zombie"]
 
+emotion_styles:
+  ["Angry", "Depressed", "Happy", "Proud", "Sneaky"]
+intrinsic_styles:
+  ["FemaleModel", "Heavy", "Old", "Robot", "Soldier", "Zombie"]
+extrinsic_styles:
+  ["Drunk", "Hurried", "Lazy", "Strutting"]

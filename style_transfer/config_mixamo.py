@@ -13,7 +13,7 @@ class Config:
     for_try = True  # set to True only if you want to quickly check if all parts (latent space visualization, result output, etc.) function correctly 
 
     # Save & Visualization
-    name = 'bfa'     # name of the experiment, for training from scratch please use a different name
+    name = 'mixamo'     # name of the experiment, for training from scratch please use a different name
 
     cuda_id = 0
 
@@ -23,12 +23,12 @@ class Config:
     use_newdecoder = True
 
     # skeleton path
-    skel_path = pjoin(BASEPATH, 'global_info', 'skeleton_CMU.yml')
+    skel_path = pjoin(BASEPATH, 'global_info', 'skeleton_Mixamo.yml')
 
     # data paths
     data_dir = pjoin(BASEPATH, 'data')
     expr_dir = BASEPATH
-    data_filename = "bfa.npz"   # change to 'bfa.npz' for training on bfa data
+    data_filename = "mixamo.npz"   # change to 'bfa.npz' for training on bfa data
     data_path = pjoin(data_dir, data_filename)
     extra_data_dir = pjoin(data_dir, data_filename.split('.')[-2].split('/')[-1] + "_norms")
 
@@ -47,7 +47,7 @@ class Config:
     mt_batch_n = 1  # number of batches to save in training
 
     # optimization options
-    max_iter = 100000              # maximum number of training iterations
+    max_iter = 300000              # maximum number of training iterations
     weight_decay = 0.0001          # weight decay
     lr_gen = 0.0001                # learning rate for the generator
     lr_dis = 0.0001                # learning rate for the discriminator
@@ -83,12 +83,12 @@ class Config:
     }
 
     # input: T * 64
-    rot_channels = 128  # added one more y-axis rotation
-    pos3d_channels = 64  # changed to be the same as rfree
-    proj_channels = 42
+    rot_channels = 264  # added one more y-axis rotation
+    pos3d_channels = 76  # changed to be the same as rfree
+    proj_channels = 50
 
     num_channel = rot_channels
-    num_style_joints = 21
+    num_style_joints = 25
 
     style_channel_2d = proj_channels
     style_channel_3d = pos3d_channels
@@ -99,7 +99,7 @@ class Config:
     followed by [enc_cl_global_pool]
 
     """
-    enc_cl_down_n = 2  # 64 -> 38 -> 19 -> 9 -> 4
+    enc_cl_down_n = 2  # 76 -> 38 -> 19 -> 9 -> 4
     enc_cl_channels = [0, 96, 144]
     enc_cl_kernel_size = 8
     enc_cl_stride = 2
@@ -109,7 +109,7 @@ class Config:
     [down_n] stride=[enc_co_stride], dim=[enc_co_channels] convs (with IN)
     followed by [enc_co_resblks] resblks with IN
     """
-    enc_co_down_n = 1  # 64 -> 38 -> 19 -> 9
+    enc_co_down_n = 1  # 76 -> 38 -> 19 -> 9
     enc_co_channels = [num_channel, 144]
     enc_co_kernel_size = 8
     enc_co_stride = 2
@@ -133,7 +133,7 @@ class Config:
     dec_resblks = enc_co_resblks
     dec_channels = enc_co_channels.copy()
     dec_channels.reverse()
-    dec_channels[-1] = 31 * 4  # Let it output rotations only
+    dec_channels[-1] = 65 * 4  # Let it output rotations only
     dec_up_n = enc_co_down_n
     dec_kernel_size = 8
     dec_stride = 1
@@ -150,13 +150,13 @@ class Config:
 
     """
     disc_channels = [pos3d_channels, 96, 144]
-    disc_down_n = 2  # 64 -> 38 -> 19 -> 9 -> 4
+    disc_down_n = 2  # 76 -> 38 -> 19 -> 9 -> 4
     disc_kernel_size = 6
     disc_stride = 1
     disc_pool_size = 3
     disc_pool_stride = 2
 
-    num_classes = 16         # set to 16 for training on bfa data
+    num_classes = 8         # set to 16 for training on bfa data
 
     gan_w = 1
     rec_w = 1
