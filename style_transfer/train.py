@@ -29,6 +29,7 @@ def main(args):
     # Load experiment setting
     config.initialize(args)
     max_iter = config.max_iter
+    no_content = not config.plot_content
 
     # Dataloader
 
@@ -128,7 +129,7 @@ def main(args):
                     vis_dicts[phase] = vis_dict
 
                 writers = {"train": train_writer, "test": test_writer}
-                get_all_plots(vis_dicts, os.path.join(config.output_dir, key_str), writers, iterations + 1, style_cluster_protocols=('pca', 'tsne'))
+                get_all_plots(vis_dicts, os.path.join(config.output_dir, key_str), writers, iterations + 1, style_cluster_protocols=('pca', 'tsne'), no_content=no_content)
 
                 """outputs"""
                 for phase, co_loader, cl_loader in [['trainfull', trainfull_content_loader, trainfull_class_loader],

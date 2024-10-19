@@ -3,7 +3,9 @@
 # https://www.ianxmason.com/100style/
 
 style_names:
-  ["Angry", "Crouched", "Depressed", "Neutral", "Old", "Proud", "Skip", "Strutting"]
+  ["Angry", "Crouched", "Depressed", "Neutral", "Old", "Proud", "Skip", "Strutting", "Aeroplane", "Cat", "Chicken", "Dinosaur", "Fairy", "Monk", "Morris", "Penguin",
+  "Quail", "Roadrunner", "Robot", "Rocket", "Star", "Superman", "Zombie", "Balance", "Heavyset", "Old", "Rushed", "Stif", "CrowdAvoidance", "InTheDark", "LawnMower", "OnHeels", 
+  "OnPhoneLeft", "OnPhoneRight", "OnToesBentForward", "OnToesCrouched", "Rushed"]
 
 # BR	Backwards Running
 # BW	Backwards Walking

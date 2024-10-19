@@ -205,7 +205,7 @@ def calc_many_blas(raws, calc_single):
 
 def get_all_plots(data, output_path, writers, iter, summary=True,
                   style_cluster_protocols=('pca'),
-                  separate_compute=False):
+                  separate_compute=False, no_content=False):
     """
     data: {"train": dict_train, "test": dict_test}
     dict_train: {"style2d_code": blabla, etc.}
@@ -255,6 +255,8 @@ def get_all_plots(data, output_path, writers, iter, summary=True,
                 if separate_compute:
                     code = protocol(codes_raw[i])
                 for label_type in ["style", "content"]:
+                    if no_content and label_type == "content":
+                        continue
                     fig = plot2D(code, data[phase]["meta"][label_type], fig_title(f'{title}_{name}_{label_type}'))
                     add_fig(fig, f'{title}_{name}_{label_type}', phase)
 
@@ -263,6 +265,8 @@ def get_all_plots(data, output_path, writers, iter, summary=True,
     content_code_pca = calc_pca(data["train"]["content_code"])
 
     for label in ["style", "content", "phase"]:
+        if no_content and (label == "content" or label == "phase"):
+            continue
         if label == "phase":
             indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "FW"]
             if len(indices) == 0:
