@@ -49,7 +49,7 @@ class Config:
     mt_batch_n = 1  # number of batches to save in training
 
     # optimization options
-    max_iter = 500000              # maximum number of training iterations
+    max_iter = 300000              # maximum number of training iterations
     weight_decay = 0.0001          # weight decay
     lr_gen = 0.0001                # learning rate for the generator
     lr_dis = 0.0001                # learning rate for the discriminator
@@ -112,7 +112,7 @@ class Config:
     followed by [enc_co_resblks] resblks with IN
     """
     enc_co_down_n = 1  # 76 -> 38 -> 19 -> 9
-    enc_co_channels = [num_channel, 144]
+    enc_co_channels = [num_channel, 256]
     enc_co_kernel_size = 8
     enc_co_stride = 2
     enc_co_resblks = 1
@@ -131,7 +131,7 @@ class Config:
     [dec_up_n] Upsampling followed by stride=[dec_stride] convs
     """
 
-    dec_bt_channel = 144
+    dec_bt_channel = 256
     dec_resblks = enc_co_resblks
     dec_channels = enc_co_channels.copy()
     dec_channels.reverse()
@@ -191,7 +191,8 @@ class Config:
         self.output_dir = os.path.join(self.main_dir, "output")
 
         ensure_dirs([self.main_dir, self.model_dir, self.tb_dir, self.info_dir, self.output_dir, self.extra_data_dir])
-
+        if args.gpu != -1:
+            self.cuda_id = args.gpu
         self.device = torch.device("cuda:%d" % self.cuda_id if torch.cuda.is_available() else "cpu")
 
         if save:

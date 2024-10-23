@@ -130,9 +130,15 @@ class Trainer(nn.Module):
 
     def save(self, iterations):
         gen_name = os.path.join(self.model_dir, 'gen_%08d.pt' % (iterations + 1))
+        style_encoder_name = os.path.join(self.model_dir, 'enc_style_%08d.pt' % (iterations + 1))
+        content_encoder_name = os.path.join(self.model_dir, 'enc_content_%08d.pt' % (iterations + 1))
+        mlp_name = os.path.join(self.model_dir, 'mlp_%08d.pt' % (iterations + 1))
         dis_name = os.path.join(self.model_dir, 'dis_%08d.pt' % (iterations + 1))
         opt_name = os.path.join(self.model_dir, 'optimizer.pt')
         torch.save({'gen': self.model.gen.state_dict()}, gen_name)
+        torch.save({'enc_style': self.model.gen.enc_style3d.state_dict()}, style_encoder_name)
+        torch.save({'enc_content': self.model.gen.enc_content.state_dict()}, content_encoder_name)
+        torch.save({'mlp': self.model.gen.mlp.state_dict()}, mlp_name)
         torch.save({'dis': self.model.dis.state_dict()}, dis_name)
         torch.save({'gen': self.gen_opt.state_dict(),
                     'dis': self.dis_opt.state_dict()}, opt_name)

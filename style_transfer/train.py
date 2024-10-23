@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument('--name', type=str)
     parser.add_argument('--batch_size', type=int)
     parser.add_argument('--config', type=str, default='config')
+    parser.add_argument('--gpu', type=int, default=-1)
     return parser.parse_args()
 
 def main(args):
@@ -92,8 +93,10 @@ def main(args):
                 iterations + 1) % config.mt_display_iter == 0):
             if (iterations + 1) % config.mt_save_iter == 0:
                 key_str = '%08d' % (iterations + 1)
+                plot_method = ('pca', 'tsne')
             else:
                 key_str = 'current'
+                plot_method = ('pca')
 
             with torch.no_grad():
 
@@ -129,7 +132,7 @@ def main(args):
                     vis_dicts[phase] = vis_dict
 
                 writers = {"train": train_writer, "test": test_writer}
-                get_all_plots(vis_dicts, os.path.join(config.output_dir, key_str), writers, iterations + 1, style_cluster_protocols=('pca', 'tsne'), no_content=no_content)
+                get_all_plots(vis_dicts, os.path.join(config.output_dir, key_str), writers, iterations + 1, style_cluster_protocols=plot_method, no_content=no_content)
 
                 """outputs"""
                 for phase, co_loader, cl_loader in [['trainfull', trainfull_content_loader, trainfull_class_loader],
