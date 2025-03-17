@@ -9,3 +9,5 @@ python style_transfer/test.py --content_src style_transfer/data/xia_test/neutral
 
 python style_transfer/test.py --content_src style_transfer/data/xia_test/neutral_01_000.bvh --style_src style_transfer/data/treadmill/json_inputs/27 --output_dir style_transfer/demo_results/comp_video_1
 python style_transfer/test.py --content_src style_transfer/data/xia_test/neutral_01_000.bvh --style_src style_transfer/data/treadmill/json_inputs/32 --output_dir style_transfer/demo_results/comp_video_2
+
+python style_transfer/test.py --content_src style_transfer/data/basketball_simple/LH_L0.bvh --style_src style_transfer/data/tencent_style_raw/angry_13_000.bvh --output_dir style_transfer/demo_results/tencent_3d_angry

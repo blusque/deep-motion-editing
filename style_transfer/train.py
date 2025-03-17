@@ -18,7 +18,7 @@ from trainer import Trainer
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--name', type=str)
-    parser.add_argument('--batch_size', type=int)
+    parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--config', type=str, default='config')
     parser.add_argument('--gpu', type=int, default=-1)
     return parser.parse_args()

@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument('--content_src', type=str, default=None)
     parser.add_argument('--style_src', type=str, default=None)
     parser.add_argument('--output_dir', type=str, default=None)
+    parser.add_argument('--gpu', type=int, default=-1)
 
     return parser.parse_args()
 

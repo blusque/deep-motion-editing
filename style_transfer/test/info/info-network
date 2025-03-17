@@ -1,0 +1,154 @@
+Model(
+  (gen): JointGen(
+    (enc_style2d): EncoderStyle(
+      (conv_model): Sequential(
+        (0): ReflectionPad1d((3, 4))
+        (1): Conv1d(42, 96, kernel_size=(8,), stride=(2,))
+        (2): LeakyReLU(negative_slope=0.2, inplace=True)
+        (3): ReflectionPad1d((3, 4))
+        (4): Conv1d(96, 144, kernel_size=(8,), stride=(2,))
+        (5): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (enc_style3d): EncoderStyle(
+      (conv_model): Sequential(
+        (0): ReflectionPad1d((3, 4))
+        (1): Conv1d(64, 96, kernel_size=(8,), stride=(2,))
+        (2): LeakyReLU(negative_slope=0.2, inplace=True)
+        (3): ReflectionPad1d((3, 4))
+        (4): Conv1d(96, 144, kernel_size=(8,), stride=(2,))
+        (5): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (enc_content): EncoderContent(
+      (conv_model): Sequential(
+        (0): ReflectionPad1d((3, 4))
+        (1): Conv1d(128, 144, kernel_size=(8,), stride=(2,))
+        (2): InstanceNorm1d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=False)
+        (3): LeakyReLU(negative_slope=0.2, inplace=True)
+        (4): ResBlock(
+          (model): Sequential(
+            (0): ReflectionPad1d((3, 4))
+            (1): Conv1d(144, 144, kernel_size=(8,), stride=(1,))
+            (2): InstanceNorm1d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=False)
+            (3): LeakyReLU(negative_slope=0.2, inplace=True)
+            (4): ReflectionPad1d((3, 4))
+            (5): Conv1d(144, 144, kernel_size=(8,), stride=(1,))
+            (6): InstanceNorm1d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=False)
+          )
+        )
+      )
+    )
+    (dec): Decoder(
+      (model): Sequential(
+        (0): AdaptiveInstanceNorm1d(144)
+        (1): BottleNeckResBlock(
+          (conv_model): Sequential(
+            (0): ReflectionPad1d((3, 4))
+            (1): Conv1d(144, 144, kernel_size=(8,), stride=(1,))
+            (2): LeakyReLU(negative_slope=0.2, inplace=True)
+            (3): ReflectionPad1d((3, 4))
+            (4): Conv1d(144, 144, kernel_size=(8,), stride=(1,))
+          )
+        )
+        (2): Upsample()
+        (3): ReflectionPad1d((3, 4))
+        (4): Conv1d(144, 124, kernel_size=(8,), stride=(1,))
+      )
+    )
+    (mlp): MLP(
+      (model): Sequential(
+        (0): Linear(in_features=144, out_features=192, bias=True)
+        (1): LeakyReLU(negative_slope=0.2, inplace=True)
+        (2): Linear(in_features=192, out_features=256, bias=True)
+        (3): LeakyReLU(negative_slope=0.2, inplace=True)
+        (4): Linear(in_features=256, out_features=288, bias=True)
+      )
+    )
+  )
+  (dis): PatchDis(
+    (cnn_f): Sequential(
+      (0): ReflectionPad1d((2, 3))
+      (1): Conv1d(64, 64, kernel_size=(6,), stride=(1,))
+      (2): ActiFirstResBlock(
+        (conv_model): Sequential(
+          (0): LeakyReLU(negative_slope=0.2, inplace=True)
+          (1): ReflectionPad1d((2, 3))
+          (2): Conv1d(64, 64, kernel_size=(6,), stride=(1,))
+          (3): LeakyReLU(negative_slope=0.2, inplace=True)
+          (4): ReflectionPad1d((2, 3))
+          (5): Conv1d(64, 64, kernel_size=(6,), stride=(1,))
+        )
+      )
+      (3): ActiFirstResBlock(
+        (conv_model): Sequential(
+          (0): LeakyReLU(negative_slope=0.2, inplace=True)
+          (1): ReflectionPad1d((2, 3))
+          (2): Conv1d(64, 64, kernel_size=(6,), stride=(1,))
+          (3): LeakyReLU(negative_slope=0.2, inplace=True)
+          (4): ReflectionPad1d((2, 3))
+          (5): Conv1d(64, 96, kernel_size=(6,), stride=(1,))
+        )
+        (conv_s): Sequential(
+          (0): ConstantPad1d(padding=(2, 3), value=0)
+          (1): Conv1d(64, 96, kernel_size=(6,), stride=(1,), bias=False)
+        )
+      )
+      (4): ReflectionPad1d((0, 1))
+      (5): AvgPool1d(kernel_size=(3,), stride=(2,), padding=(0,))
+      (6): ActiFirstResBlock(
+        (conv_model): Sequential(
+          (0): LeakyReLU(negative_slope=0.2, inplace=True)
+          (1): ReflectionPad1d((2, 3))
+          (2): Conv1d(96, 96, kernel_size=(6,), stride=(1,))
+          (3): LeakyReLU(negative_slope=0.2, inplace=True)
+          (4): ReflectionPad1d((2, 3))
+          (5): Conv1d(96, 96, kernel_size=(6,), stride=(1,))
+        )
+      )
+      (7): ActiFirstResBlock(
+        (conv_model): Sequential(
+          (0): LeakyReLU(negative_slope=0.2, inplace=True)
+          (1): ReflectionPad1d((2, 3))
+          (2): Conv1d(96, 96, kernel_size=(6,), stride=(1,))
+          (3): LeakyReLU(negative_slope=0.2, inplace=True)
+          (4): ReflectionPad1d((2, 3))
+          (5): Conv1d(96, 144, kernel_size=(6,), stride=(1,))
+        )
+        (conv_s): Sequential(
+          (0): ConstantPad1d(padding=(2, 3), value=0)
+          (1): Conv1d(96, 144, kernel_size=(6,), stride=(1,), bias=False)
+        )
+      )
+      (8): ReflectionPad1d((0, 1))
+      (9): AvgPool1d(kernel_size=(3,), stride=(2,), padding=(0,))
+      (10): ActiFirstResBlock(
+        (conv_model): Sequential(
+          (0): LeakyReLU(negative_slope=0.2, inplace=True)
+          (1): ReflectionPad1d((2, 3))
+          (2): Conv1d(144, 144, kernel_size=(6,), stride=(1,))
+          (3): LeakyReLU(negative_slope=0.2, inplace=True)
+          (4): ReflectionPad1d((2, 3))
+          (5): Conv1d(144, 144, kernel_size=(6,), stride=(1,))
+        )
+      )
+      (11): ActiFirstResBlock(
+        (conv_model): Sequential(
+          (0): LeakyReLU(negative_slope=0.2, inplace=True)
+          (1): ReflectionPad1d((2, 3))
+          (2): Conv1d(144, 144, kernel_size=(6,), stride=(1,))
+          (3): LeakyReLU(negative_slope=0.2, inplace=True)
+          (4): ReflectionPad1d((2, 3))
+          (5): Conv1d(144, 144, kernel_size=(6,), stride=(1,))
+        )
+      )
+    )
+    (cnn_c): Sequential(
+      (0): LeakyReLU(negative_slope=0.2, inplace=True)
+      (1): ReflectionPad1d((2, 3))
+      (2): Conv1d(144, 8, kernel_size=(6,), stride=(1,))
+    )
+  )
+  (mse): MSELoss()
+  (triplet_loss): TripletMarginLoss()
+)

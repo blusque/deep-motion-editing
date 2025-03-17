@@ -51,7 +51,7 @@ def extract_weight(me):
     vgrps = me.vertex_groups
 
     weight = np.zeros((len(verts), len(vgrps)))
-    mask = np.zeros(weight.shape, dtype=np.int)
+    mask = np.zeros(weight.shape, dtype=np.int64)
     vgrp_label = vgrps.keys()
 
     for i, vert in enumerate(verts):

@@ -6,8 +6,8 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "../.."))
 from utils import BVH
 
-filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rest_mixamo.bvh")
-output_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "skeleton_mixamo.yml")
+filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rest_tencent_basketball.bvh")
+output_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "skeleton_tencent_basketball.yml")
 
 def process_skel(filename: str):
     bvh = BVH.load(filename)

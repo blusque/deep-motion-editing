@@ -107,6 +107,7 @@ class Trainer(nn.Module):
         model_dir = self.model_dir
 
         last_model_name = get_model_list(model_dir, "gen")
+        print('last_model_name:', last_model_name)
         if last_model_name is None:
             print('Initialize from 0')
             return 0

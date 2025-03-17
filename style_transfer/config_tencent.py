@@ -15,9 +15,9 @@ class Config:
     plot_content = True
 
     # Save & Visualization
-    name = 'pretrained'     # name of the experiment, for training from scratch please use a different name
+    name = 'tencent'     # name of the experiment, for training from scratch please use a different name
 
-    cuda_id = 0
+    cuda_id = 1
 
     # hyyyper params
 
@@ -25,12 +25,12 @@ class Config:
     use_newdecoder = True
 
     # skeleton path
-    skel_path = pjoin(BASEPATH, 'global_info', 'skeleton_CMU.yml')
+    skel_path = pjoin(BASEPATH, 'global_info', 'skeleton_Tencent_Basketball.yml')
 
     # data paths
     data_dir = pjoin(BASEPATH, 'data')
     expr_dir = BASEPATH
-    data_filename = "xia.npz"   # change to 'bfa.npz' for training on bfa data
+    data_filename = "tencent_style.npz"   # change to 'bfa.npz' for training on bfa data
     data_path = pjoin(data_dir, data_filename)
     extra_data_dir = pjoin(data_dir, data_filename.split('.')[-2].split('/')[-1] + "_norms")
 
@@ -51,13 +51,13 @@ class Config:
     # optimization options
     max_iter = 300000              # maximum number of training iterations
     weight_decay = 0.0001          # weight decay
-    lr_gen = 0.0001                # learning rate for the generator
+    lr_gen = 0.0010                # learning rate for the generator
     lr_dis = 0.0001                # learning rate for the discriminator
     weight_init = 'kaiming'                 # initialization [gaussian/kaiming/xavier/orthogonal]
     lr_policy = None
 
     # Training
-    batch_size = 128
+    batch_size = 512
 
     # Testing
     test_batch_n = 56  # number of test clips
@@ -72,7 +72,7 @@ class Config:
         mt_batch_n = 1  # number of batches to save in training
 
         # max_iter = 10              # maximum number of training iterations
-        batch_size = 16
+        batch_size = 512
 
     # dataset
     dataset_norm_config = {  # specify the prefix of mean/std
@@ -85,7 +85,7 @@ class Config:
     }
 
     # input: T * 64
-    rot_channels = 128  # added one more y-axis rotation
+    rot_channels = 88  # added one more y-axis rotation
     pos3d_channels = 64  # changed to be the same as rfree
     proj_channels = 42
 
@@ -94,6 +94,7 @@ class Config:
 
     style_channel_2d = proj_channels
     style_channel_3d = pos3d_channels
+    # style_channel_text = 1
 
     """
     encoder for class
@@ -101,7 +102,7 @@ class Config:
     followed by [enc_cl_global_pool]
 
     """
-    enc_cl_down_n = 2  # 64 -> 32 -> 16 -> 8 -> 4
+    enc_cl_down_n = 2  # 76 -> 38 -> 19 -> 9 -> 4
     enc_cl_channels = [0, 96, 144]
     enc_cl_kernel_size = 8
     enc_cl_stride = 2
@@ -111,8 +112,8 @@ class Config:
     [down_n] stride=[enc_co_stride], dim=[enc_co_channels] convs (with IN)
     followed by [enc_co_resblks] resblks with IN
     """
-    enc_co_down_n = 1  # 64 -> 32 -> 16 -> 8
-    enc_co_channels = [num_channel, 144]
+    enc_co_down_n = 1  # 76 -> 38 -> 19 -> 9
+    enc_co_channels = [num_channel, 256]
     enc_co_kernel_size = 8
     enc_co_stride = 2
     enc_co_resblks = 1
@@ -131,11 +132,11 @@ class Config:
     [dec_up_n] Upsampling followed by stride=[dec_stride] convs
     """
 
-    dec_bt_channel = 144
+    dec_bt_channel = 256
     dec_resblks = enc_co_resblks
     dec_channels = enc_co_channels.copy()
     dec_channels.reverse()
-    dec_channels[-1] = 31 * 4  # Let it output rotations only
+    dec_channels[-1] = 21 * 4  # Let it output rotations only
     dec_up_n = enc_co_down_n
     dec_kernel_size = 8
     dec_stride = 1
@@ -152,7 +153,7 @@ class Config:
 
     """
     disc_channels = [pos3d_channels, 96, 144]
-    disc_down_n = 2  # 64 -> 32 -> 16 -> 8 -> 4
+    disc_down_n = 2  # 76 -> 38 -> 19 -> 9 -> 4
     disc_kernel_size = 6
     disc_stride = 1
     disc_pool_size = 3
@@ -191,7 +192,6 @@ class Config:
         self.output_dir = os.path.join(self.main_dir, "output")
 
         ensure_dirs([self.main_dir, self.model_dir, self.tb_dir, self.info_dir, self.output_dir, self.extra_data_dir])
-
         if args.gpu != -1:
             self.cuda_id = args.gpu
         self.device = torch.device("cuda:%d" % self.cuda_id if torch.cuda.is_available() else "cpu")

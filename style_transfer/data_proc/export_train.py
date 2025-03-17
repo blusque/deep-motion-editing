@@ -215,6 +215,83 @@ def generate_database_xia(bvh_path, output_path, window, window_step, dataset_co
         shutil.copy(pjoin(bvh_path, file), pjoin(test_folder, file))
 
 
+def generate_database_tencent_xia(bvh_path, output_path, window, window_step, dataset_config='tencent_style.yml'):
+    with open(dataset_config, "r") as f:
+        cfg = yaml.load(f, Loader=yaml.Loader)
+    content_namedict = [full_name.split('_')[0] for full_name in cfg["content_full_names"]]
+    content_test_cnt = cfg["content_test_cnt"]
+    content_names = cfg["content_names"]
+    style_names = cfg["style_names"]
+    style_name_to_idx = {name: i for i, name in enumerate(style_names)}
+
+    skel = Skel(pjoin(BASEPATH, '../global_info', 'skeleton_Tencent_Basketball.yml'))
+
+    bvh_files = get_bvh_files(bvh_path)
+
+    train_inputs = []
+    test_inputs = []
+    trainfull_inputs = []
+    test_files = []
+    test_cnt = {}  # indexed by content_style
+
+    for i, item in enumerate(bvh_files):
+        print('Processing %i of %i (%s)' % (i, len(bvh_files), item))
+        filename = item.split('/')[-1]
+        style, content_idx, _ = filename.split('_')
+        content = content_namedict[int(content_idx) - 1]
+        content_style = "%s_%s" % (content, style)
+
+        uclip = motion_and_phase_to_dict(process_file(item, divider=divide_clip_xia, window=window, window_step=window_step,
+                                                      skel=skel, divide=False),
+                                         style_name_to_idx[style],
+                                         {"style": style, "content": content})
+        # Whether this should be a test clip
+        set_init(test_cnt, content_style, 0)
+        if test_cnt[content_style] < content_test_cnt[content]:
+            test_cnt[content_style] += 1
+            test_inputs += uclip
+            test_files.append(filename)
+        else:
+            trainfull_inputs += uclip
+            clips = motion_and_phase_to_dict(process_file(item, divider=divide_clip_xia, window=window, window_step=window_step,
+                                                          skel=skel, divide=True),
+                                             style_name_to_idx[style],
+                                             {"style": style, "content": content})
+            train_inputs += clips
+
+    data_dict = {}
+    data_info = {}
+    for subset, inputs in zip(["train", "test", "trainfull"], [train_inputs, test_inputs, trainfull_inputs]):
+        motions = [input["motion"] for input in inputs]
+        styles = [input["style"] for input in inputs]
+        meta = {key: [input["meta"][key] for input in inputs] for key in inputs[0]["meta"].keys()}
+        data_dict[subset] = {"motion": motions, "style": styles, "meta": meta}
+
+        """compute meta info"""
+        num_clips = len(motions)
+        info = {"num_clips": num_clips,
+                "distribution":
+                    {style:
+                         {content: len([i for i in range(num_clips) if meta["style"][i] == style and meta["content"][i] == content])
+                          for content in content_names}
+                     for style in style_names}
+                }
+        data_info[subset] = info
+
+    np.savez_compressed(output_path + ".npz", **data_dict)
+
+    info_file = output_path + ".info"
+    data_info["test_files"] = test_files
+    with open(info_file, "w") as f:
+        yaml.dump(data_info, f, sort_keys=False)
+
+    test_folder = output_path + "_test"
+    if not os.path.exists(test_folder):
+        os.makedirs(test_folder)
+    for file in test_files:
+        shutil.copy(pjoin(bvh_path, file), pjoin(test_folder, file))
+
+
 def generate_database_bfa(bvh_path, output_path, window, window_step, downsample=4, dataset_config='bfa_dataset.yml'):
     with open(dataset_config, "r") as f:
         cfg = yaml.load(f, Loader=yaml.Loader)
@@ -296,7 +373,6 @@ def generate_database_mixamo(bvh_path, output_path, window, window_step, downsam
     train_inputs = []
     test_inputs = []
     trainfull_inputs = []
-    test_files = []
 
     group_size = 10  # pick the last clip from every group_size clips for test
     test_window = window * 2
@@ -351,15 +427,8 @@ def generate_database_mixamo(bvh_path, output_path, window, window_step, downsam
     np.savez_compressed(output_path + ".npz", **data_dict)
 
     info_file = output_path + ".info"
-    data_info["test_files"] = test_files
     with open(info_file, "w") as f:
         yaml.dump(data_info, f, sort_keys=False)
-
-    test_folder = output_path + "_test"
-    if not os.path.exists(test_folder):
-        os.makedirs(test_folder)
-    for file in test_files:
-        shutil.copy(pjoin(bvh_path, file), pjoin(test_folder, file))
 
 
 def parse_args():
@@ -386,6 +455,10 @@ def main(args):
         generate_database_mixamo(bvh_path=args.bvh_path, output_path=args.output_path,
                                  window=args.window, window_step=args.window_step,
                                  dataset_config=args.dataset_config)
+    elif args.dataset == "tencent_style":
+        generate_database_tencent_xia(bvh_path=args.bvh_path, output_path=args.output_path,
+                                      window=args.window, window_step=args.window_step,
+                                      dataset_config=args.dataset_config)
     else:
         assert 0, f'Unsupported dataset type {args.dataset}'
 

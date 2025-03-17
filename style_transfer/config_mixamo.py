@@ -51,13 +51,13 @@ class Config:
     # optimization options
     max_iter = 300000              # maximum number of training iterations
     weight_decay = 0.0001          # weight decay
-    lr_gen = 0.0001                # learning rate for the generator
+    lr_gen = 0.0010                # learning rate for the generator
     lr_dis = 0.0001                # learning rate for the discriminator
     weight_init = 'kaiming'                 # initialization [gaussian/kaiming/xavier/orthogonal]
     lr_policy = None
 
     # Training
-    batch_size = 256
+    batch_size = 512
 
     # Testing
     test_batch_n = 56  # number of test clips
@@ -85,7 +85,7 @@ class Config:
     }
 
     # input: T * 64
-    rot_channels = 264  # added one more y-axis rotation
+    rot_channels = 104  # added one more y-axis rotation
     pos3d_channels = 76  # changed to be the same as rfree
     proj_channels = 50
 
@@ -94,6 +94,7 @@ class Config:
 
     style_channel_2d = proj_channels
     style_channel_3d = pos3d_channels
+    # style_channel_text = 1
 
     """
     encoder for class
@@ -135,7 +136,7 @@ class Config:
     dec_resblks = enc_co_resblks
     dec_channels = enc_co_channels.copy()
     dec_channels.reverse()
-    dec_channels[-1] = 65 * 4  # Let it output rotations only
+    dec_channels[-1] = 25 * 4  # Let it output rotations only
     dec_up_n = enc_co_down_n
     dec_kernel_size = 8
     dec_stride = 1

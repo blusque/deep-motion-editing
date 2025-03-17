@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import clip
+
 
 def get_conv_pad(kernel_size, stride, padding=nn.ReflectionPad1d):
     pad_l = (kernel_size - stride) // 2
@@ -235,5 +237,31 @@ class BottleNeckResBlock(nn.Module):
         dx = self.conv_model(x)
         out = x_s + dx
         return out
+
+
+class StyleTextEncoder(nn.Module):
+    def __init__(self, latent_dim, device, freeze=True):
+        self.device = device
+        self.freeze = freeze
+        self.model, _ = clip.load('ViT-B/32', device=self.device)
+        self.text_features_dim = self.model.token_embedding.shape[-1]
+        self.latent_dim = latent_dim
+        self.emb = nn.Sequential([
+            nn.Linear(self.text_features_dim, self.latent_dim),
+            nn.SiLU(),
+            nn.Linear(self.latent_dim, self.latent_dim),
+            nn.Dropout(p=0.2)
+        ])
+
+    def encode_only(self, text_token):
+        with torch.no_grad():
+            text_features = self.model.encode_text(text_token)
+        return text_features
+    
+    def forward(self, text_token):
+        if self.freeze:
+            text_features =  self.encode_only(text_token)
+        text_features = self.model.encode_text(text_token)
+        return self.emb(text_features)
 
 

@@ -28,8 +28,10 @@ class GPUGet:
             gpu_dict = self.get_gpu_info()
             for i, (gpu_state, gpu_power, gpu_memory) in gpu_dict.items():
                 if gpu_state == "P8" and gpu_power <= 40 and gpu_memory <= 1000:  # 设置GPU选用条件，当前适配的是Nvidia-RTX3090
-                    gpu_str = f"GPU/id: {i}, GPU/state: {gpu_state}, GPU/memory: {gpu_memory}MiB, GPU/power: {gpu_power}W\n "
+                    sys.stdout.write("#######################    FIND    #######################\n")
+                    gpu_str = f"GPU/id: {i}, GPU/state: {gpu_state}, GPU/memory: {gpu_memory}MiB, GPU/power: {gpu_power}W\n"
                     sys.stdout.write(gpu_str)
+                    sys.stdout.write("###########################################################\n")
                     sys.stdout.flush()
                     available_gpus.append(i)
             if len(available_gpus) >= self.min_gpu_number:
@@ -41,7 +43,7 @@ class GPUGet:
     def run(self, cmd_parameter, cmd_command):
         available_gpus = self.loop_monitor()
         # 构建终端命令
-        cmd_parameter = fr"""CUDA_DEVICE={available_gpus[0]}; \ """  # 一定要有 `; \ `
+        cmd_parameter = fr"""CUDA_DEVICE={available_gpus[0]}; """  # 一定要有 `; \ `
         cmd_command = fr"""{cmd_command}"""
         command = fr"""{cmd_parameter} {cmd_command}"""
         print(command)
@@ -50,9 +52,9 @@ class GPUGet:
 
 if __name__ == '__main__':
     min_gpu_number = 1  # 最小GPU数量，多于这个数值才会开始执行训练任务。
-    time_interval = 3  # 监控GPU状态的频率，单位秒。
+    time_interval = 1  # 监控GPU状态的频率，单位秒。
     gpu_get = GPUGet(min_gpu_number, time_interval)
 
     cmd_parameter = r""""""  # 命令会使用到的参数，使用 `;` 连接。
-    cmd_command = r"""train.sh ${CUDA_DEVICE}"""
+    cmd_command = r"""./train.sh ${CUDA_DEVICE}"""
     gpu_get.run(cmd_parameter, cmd_command)

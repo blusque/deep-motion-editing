@@ -13,7 +13,7 @@ from torch.utils.data import Dataset, DataLoader
 from utils.animation_data import AnimationData
 from utils.animation_2d_data import AnimationData2D
 from utils.load_skeleton import Skel
-from config import Config
+from style_transfer.config_mixamo import Config
 from py_utils import print_composite
 
 

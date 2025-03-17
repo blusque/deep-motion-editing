@@ -62,10 +62,17 @@ class EncoderContent(nn.Module):
 
 
 class EncoderStyle(nn.Module):
-    def __init__(self, config, dim):
+    def __init__(self, config, type):
         super(EncoderStyle, self).__init__()
         channels = config.enc_cl_channels
-        channels[0] = config.style_channel_3d if dim == "3d" else config.style_channel_2d
+        if type == '3d':
+            channels[0] = config.style_channel_3d
+        elif type == '2d':
+            channels[0] = config.style_channel_2d
+        elif type == 'text':
+            channels[0] = config.style_channel_text
+        else:
+            raise ValueError("Unsupported style input type.")
 
         kernel_size = config.enc_cl_kernel_size
         stride = config.enc_cl_stride
@@ -233,11 +240,11 @@ class PatchDis(nn.Module):
         self.device = config.device
 
     def forward(self, x, y):
-        assert(x.size(0) == y.size(0))
+        # assert(x.size(0) == y.size(0))
         feat = self.cnn_f(x)
         out = self.cnn_c(feat)
         index = torch.LongTensor(range(out.size(0))).to(self.device)
-        out = out[index, y, :]
+        out = out[index, y, ...]
         return out, feat
 
     def calc_dis_fake_loss(self, input_fake, input_label):

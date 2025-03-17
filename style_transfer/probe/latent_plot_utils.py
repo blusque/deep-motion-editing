@@ -272,7 +272,7 @@ def get_all_plots(data, output_path, writers, iter, summary=True,
             if len(indices) == 0:
                 continue
             # indices = [i for i in range(len(data["train"]["meta"]["content"])) if data["train"]["meta"]["content"][i] == "walk"]
-            walk_code = content_code_pca[np.array(indices, dtype=np.int32)]
+            walk_code = content_code_pca[np.array(indices, dtype=np.int6432)]
             phase_labels = [data["train"]["meta"]["phase"][i] for i in indices]
             # print(phase_labels)
             # print(walk_code.shape)
